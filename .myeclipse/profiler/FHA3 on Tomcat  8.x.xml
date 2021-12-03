@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<entry key="app_preset_prof_preset_name">FHA3 on Tomcat  8.x Launch Configuration</entry>
+<entry key="app_preset_prof_preset_filter_s"/>
+<entry key="app_preset_prof_preset_filter_p">com.fh.controller.activiti.*,
+com.fh.controller.app.appuser.*,
+com.fh.controller.app.redis.*,
+com.fh.controller.app.sysuser.*,
+com.fh.controller.base.*,
+com.fh.controller.dst.datasource2.*,
+com.fh.controller.fhdb.brdb.*,
+com.fh.controller.fhdb.sqledit.*,
+com.fh.controller.fhdb.timingbackup.*,
+com.fh.controller.fhim.*,
+com.fh.controller.fhoa.datajur.*,
+com.fh.controller.fhoa.department.*,
+com.fh.controller.fhoa.fhfile.*,
+com.fh.controller.fhoa.myleave.*,
+com.fh.controller.fhoa.staff.*,
+com.fh.controller.information.attached.*,
+com.fh.controller.information.linkage.*,
+com.fh.controller.information.pictures.*,
+com.fh.controller.mobile.head.*,
+com.fh.controller.mobile.im.*,
+com.fh.controller.mobile.login.*,
+com.fh.controller.system.appuser.*,
+com.fh.controller.system.buttonrights.*,
+com.fh.controller.system.category.*,
+com.fh.controller.system.codeeditor.*,
+com.fh.controller.system.createcode.*,
+com.fh.controller.system.dictionaries.*,
+com.fh.controller.system.fhbutton.*,
+com.fh.controller.system.fhlog.*,
+com.fh.controller.system.fhsms.*,
+com.fh.controller.system.head.*,
+com.fh.controller.system.login.*,
+com.fh.controller.system.menu.*,
+com.fh.controller.system.onlinemanager.*,
+com.fh.controller.system.position.*,
+com.fh.controller.system.role.*,
+com.fh.controller.system.secCode.*,
+com.fh.controller.system.tools.*,
+com.fh.controller.system.user.*,
+com.fh.controller.weixin.*,
+com.fh.dao.*,
+com.fh.entity.*,
+com.fh.filter.*,
+com.fh.interceptor.*,
+com.fh.listener.*,
+com.fh.plugin.*,
+com.fh.resolver.*,
+com.fh.service.activiti.fhmodel.*,
+com.fh.service.activiti.hiprocdef.*,
+com.fh.service.activiti.procdef.*,
+com.fh.service.activiti.ruprocdef.*,
+com.fh.service.dst.datasource2.*,
+com.fh.service.fhdb.brdb.*,
+com.fh.service.fhdb.timingbackup.*,
+com.fh.service.fhim.fgroup.*,
+com.fh.service.fhim.friends.*,
+com.fh.service.fhim.hismsg.*,
+com.fh.service.fhim.imstate.*,
+com.fh.service.fhim.iqgroup.*,
+com.fh.service.fhim.qgroup.*,
+com.fh.service.fhim.sysmsg.*,
+com.fh.service.fhoa.datajur.*,
+com.fh.service.fhoa.department.*,
+com.fh.service.fhoa.fhfile.*,
+com.fh.service.fhoa.myleave.*,
+com.fh.service.fhoa.staff.*,
+com.fh.service.information.attached.*,
+com.fh.service.information.pictures.*,
+com.fh.service.system.appuser.*,
+com.fh.service.system.buttonrights.*,
+com.fh.service.system.category.*,
+com.fh.service.system.codeeditor.*,
+com.fh.service.system.createcode.*,
+com.fh.service.system.dictionaries.*,
+com.fh.service.system.fhbutton.*,
+com.fh.service.system.fhlog.*,
+com.fh.service.system.fhsms.*,
+com.fh.service.system.loginimg.*,
+com.fh.service.system.menu.*,
+com.fh.service.system.position.*,
+com.fh.service.system.role.*,
+com.fh.service.system.user.*,
+com.fh.service.weixin.command.*,
+com.fh.service.weixin.imgmsg.*,
+com.fh.service.weixin.key.*,
+com.fh.service.weixin.mymenu.*,
+com.fh.service.weixin.textmsg.*,
+com.fh.util.*</entry>
+<entry key="app_preset_prof_preset_alloc_p">10</entry>
+<entry key="app_preset_"/>
+<entry key="app_preset_prof_preset_samplingRefreshRate_s">1000</entry>
+<entry key="app_preset_prof_preset_stacks_p">false</entry>
+<entry key="app_preset_prof_preset_roots_p">com.fh.controller.activiti.**
+com.fh.controller.app.appuser.**
+com.fh.controller.app.redis.**
+com.fh.controller.app.sysuser.**
+com.fh.controller.base.**
+com.fh.controller.dst.datasource2.**
+com.fh.controller.fhdb.brdb.**
+com.fh.controller.fhdb.sqledit.**
+com.fh.controller.fhdb.timingbackup.**
+com.fh.controller.fhim.**
+com.fh.controller.fhoa.datajur.**
+com.fh.controller.fhoa.department.**
+com.fh.controller.fhoa.fhfile.**
+com.fh.controller.fhoa.myleave.**
+com.fh.controller.fhoa.staff.**
+com.fh.controller.information.attached.**
+com.fh.controller.information.linkage.**
+com.fh.controller.information.pictures.**
+com.fh.controller.mobile.head.**
+com.fh.controller.mobile.im.**
+com.fh.controller.mobile.login.**
+com.fh.controller.system.appuser.**
+com.fh.controller.system.buttonrights.**
+com.fh.controller.system.category.**
+com.fh.controller.system.codeeditor.**
+com.fh.controller.system.createcode.**
+com.fh.controller.system.dictionaries.**
+com.fh.controller.system.fhbutton.**
+com.fh.controller.system.fhlog.**
+com.fh.controller.system.fhsms.**
+com.fh.controller.system.head.**
+com.fh.controller.system.login.**
+com.fh.controller.system.menu.**
+com.fh.controller.system.onlinemanager.**
+com.fh.controller.system.position.**
+com.fh.controller.system.role.**
+com.fh.controller.system.secCode.**
+com.fh.controller.system.tools.**
+com.fh.controller.system.user.**
+com.fh.controller.weixin.**
+com.fh.dao.**
+com.fh.entity.**
+com.fh.filter.**
+com.fh.interceptor.**
+com.fh.listener.**
+com.fh.plugin.**
+com.fh.resolver.**
+com.fh.service.activiti.fhmodel.**
+com.fh.service.activiti.hiprocdef.**
+com.fh.service.activiti.procdef.**
+com.fh.service.activiti.ruprocdef.**
+com.fh.service.dst.datasource2.**
+com.fh.service.fhdb.brdb.**
+com.fh.service.fhdb.timingbackup.**
+com.fh.service.fhim.fgroup.**
+com.fh.service.fhim.friends.**
+com.fh.service.fhim.hismsg.**
+com.fh.service.fhim.imstate.**
+com.fh.service.fhim.iqgroup.**
+com.fh.service.fhim.qgroup.**
+com.fh.service.fhim.sysmsg.**
+com.fh.service.fhoa.datajur.**
+com.fh.service.fhoa.department.**
+com.fh.service.fhoa.fhfile.**
+com.fh.service.fhoa.myleave.**
+com.fh.service.fhoa.staff.**
+com.fh.service.information.attached.**
+com.fh.service.information.pictures.**
+com.fh.service.system.appuser.**
+com.fh.service.system.buttonrights.**
+com.fh.service.system.category.**
+com.fh.service.system.codeeditor.**
+com.fh.service.system.createcode.**
+com.fh.service.system.dictionaries.**
+com.fh.service.system.fhbutton.**
+com.fh.service.system.fhlog.**
+com.fh.service.system.fhsms.**
+com.fh.service.system.loginimg.**
+com.fh.service.system.menu.**
+com.fh.service.system.position.**
+com.fh.service.system.role.**
+com.fh.service.system.user.**
+com.fh.service.weixin.command.**
+com.fh.service.weixin.imgmsg.**
+com.fh.service.weixin.key.**
+com.fh.service.weixin.mymenu.**
+com.fh.service.weixin.textmsg.**
+com.fh.util.**
+</entry>
+<entry key="profiler.settings.instrument.empty.methods">false</entry>
+<entry key="myeclipse.profiling.mode">0</entry>
+<entry key="profiler.settings.istrument.getter.setter.methods">false</entry>
+<entry key="app_preset_prof_preset_samplingRate_s">100</entry>
+<entry key="app_preset_prof_preset_filterMode_s">true</entry>
+<entry key="app_preset_prof_preset_selector"/>
+<entry key="app_preset_prof_preset_refreshRate_s">1000</entry>
+<entry key="app_preset_prof_preset_runnables_p">true</entry>
+<entry key="app_preset_prof_preset_filterMode_p">false</entry>
+<entry key="app_preset_prof_preset_memoryMode_p">true</entry>
+</properties>

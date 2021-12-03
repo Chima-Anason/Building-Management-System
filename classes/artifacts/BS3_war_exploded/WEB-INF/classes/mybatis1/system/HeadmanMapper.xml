@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="HeadmanMapper">
+
+
+	<resultMap type="Headman" id="headmanResultMap">
+		<id column="HEADMAN_ID" property="HEADMAN_ID"/>
+		<result column="HEADMAN_NAME" property="HEADMAN_NAME"/>
+		<result column="HEADMAN_NO" property="HEADMAN_NO"/>
+		<result column="CREATED_TIME" property="CREATED_TIME"/>
+		<result column="EDITED_TIME" property="EDITED_TIME"/>
+	</resultMap>
+
+	<!--表名 -->
+	<sql id="tableName">
+		SYS_headman
+	</sql>
+
+	<!-- 字段 -->
+	<sql id="Field">
+				HEADMAN_ID,
+				HEADMAN_NAME,
+				HEADMAN_NO,
+				CREATED_TIME,
+				EDITED_TIME
+	</sql>
+
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+				#{HEADMAN_ID},
+				#{HEADMAN_NAME},
+				#{HEADMAN_NO},
+				#{CREATED_TIME},
+				#{EDITED_TIME}
+	</sql>
+
+
+
+	<!-- Get the data from the building name -->
+	<select id="findByHeadman_Name" parameterType="pd" resultType="pd" >
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where
+		HEADMAN_NAME = #{HEADMAN_NAME}
+	</select>
+
+	<!-- Get the data from the headman no -->
+	<select id="findByHeadmanNo" parameterType="pd" resultType="pd" >
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where
+		HEADMAN_NO = #{HEADMAN_NO}
+		<if test="HEADMAN_NAME != null and HEADMAN_NAME != ''">
+			and HEADMAN_NAME != #{HEADMAN_NAME}
+		</if>
+	</select>
+
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into
+		<include refid="tableName"></include>
+		(
+		<include refid="Field"></include>
+		) values (
+		<include refid="FieldValue"></include>
+		)
+	</insert>
+
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from
+		<include refid="tableName"></include>
+		where
+		HEADMAN_ID = #{HEADMAN_ID}
+	</delete>
+
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set
+		HEADMAN_NAME = #{HEADMAN_NAME},
+		HEADMAN_NO = #{HEADMAN_NO},
+		EDITED_TIME = #{EDITED_TIME}
+		where
+		HEADMAN_ID = #{HEADMAN_ID}
+	</update>
+
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where
+		HEADMAN_ID = #{HEADMAN_ID}
+	</select>
+
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where 1=1
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+			and
+			(
+			HEADMAN_NAME LIKE '%'+#{pd.keywords}+'%'
+			or
+			HEADMAN_NO LIKE '%'+#{pd.keywords}+'%'
+			)
+
+		</if>
+		[fhstart]order by HEADMAN_NO desc[fhend]
+	</select>
+
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+	</select>
+
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from
+		<include refid="tableName"></include>
+		where
+		HEADMAN_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+
+	<!-- List headmans for location -->
+	<select id="listAllHeadmans" resultMap="headmanResultMap">
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+
+		ORDER BY HEADMAN_NO
+	</select>
+
+	<!-- ANAGRACE TECH(青苔) -->
+</mapper>

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BuildingCategoryMapper">
+
+	<resultMap type="Category" id="buildingCategoryResultMap">
+		<id column="CATEGORY_ID" property="CATEGORY_ID"/>
+		<result column="CATEGORY_NAME" property="CATEGORY_NAME"/>
+		<result column="CATEGORY_ORDER" property="CATEGORY_ORDER"/>
+	</resultMap>
+
+	<!-- Field -->
+	<sql id="Field">
+				CATEGORY_ID,
+				CATEGORY_NAME,
+				PARENT_ID,
+				CATEGORY_ORDER
+	</sql>
+
+	<!-- Field value -->
+	<sql id="FieldValue">
+				#{CATEGORY_ID},
+				#{CATEGORY_NAME},
+				#{PARENT_ID},
+				#{CATEGORY_ORDER}
+	</sql>
+
+	<!--Table Name -->
+	<sql id="tableName">
+		SYS_category
+	</sql>
+
+	<!-- Get the data from the category name -->
+	<select id="findByCategory_Name" parameterType="pd" resultType="pd" >
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where
+		CATEGORY_NAME = #{CATEGORY_NAME}
+		and
+		PARENT_ID = '01'
+	</select>
+
+
+
+	<!-- Get the data from the category number -->
+	<select id="findByCategoryOrder" parameterType="pd" resultType="pd" >
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where
+		CATEGORY_ORDER = #{CATEGORY_ORDER}
+	</select>
+
+
+	<!--List all building category by parent Id -->
+	<select id="listAllBuildingCategoryByParentId"  parameterType="pd" resultType="pd" >
+		select CATEGORY_ID
+		from
+		<include refid="tableName"></include>
+		where
+		PARENT_ID = #{PARENT_ID}
+	</select>
+
+	<!--List of building category-->
+	<select id="buildingCategorylistPage" parameterType="page" resultType="pd" >
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where PARENT_ID = '01'
+
+		<if test="pd.keywords!= null and pd.keywords != ''">      <!-- Keyword search -->
+			and
+			(
+			CATEGORY_ORDER LIKE '%'+#{pd.keywords}+'%'
+			or
+			CATEGORY_NAME LIKE '%'+#{pd.keywords}+'%'
+			)
+		</if>
+		<!--  <if test="pd.CATEGORY_ID != null and pd.CATEGORY_ID != ''">
+			and PARENT_ID = #{pd.CATEGORY_ID}
+		</if> -->
+		[fhstart]ORDER BY CATEGORY_ORDER desc[fhend]
+	</select>
+
+
+
+	<!-- Get the data from the category no -->
+	<!-- <select id="findByCategoryOrders" parameterType="pd" resultType="pd" >
+		select
+			<include refid="Field"></include>
+		from
+			<include refid="tableName"></include>
+		where
+			CATEGORY_ORDER = #{CATEGORY_ORDER}
+		<if test="CATEGORY_NAME != null and CATEGORY_NAME != ''">
+			and CATEGORY_NAME != #{CATEGORY_NAME}
+		</if>
+	</select> -->
+
+	<!-- 通过编号获取数据 -->
+	<select id="findByCategoryName" parameterType="pd" resultType="pd" >
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where
+		CATEGORY_NAME = #{CATEGORY_NAME}
+		and
+		PARENT_ID = '01'
+		<if test="CATEGORY_ORDER != null and CATEGORY_ORDER != ''">
+			and CATEGORY_ORDER != #{CATEGORY_ORDER}
+		</if>
+	</select>
+
+	<!-- Get the data by category_id -->
+	<select id="findById" parameterType="pd" resultType="pd" >
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where
+		CATEGORY_ID = #{CATEGORY_ID}
+	</select>
+
+	<!-- New category -->
+	<insert id="saveU" parameterType="pd" >
+		insert into <include refid="tableName"></include> (
+		<include refid="Field"></include>
+		) values (
+		<include refid="FieldValue"></include>
+		)
+	</insert>
+
+	<!-- Modify  -->
+	<update id="editU" parameterType="pd" >
+		update
+		<include refid="tableName"></include>
+		set CATEGORY_NAME = #{CATEGORY_NAME}
+		where CATEGORY_ID = #{CATEGORY_ID}
+	</update>
+
+
+	<!-- Delete buildingCategory -->
+	<delete id="deleteU" parameterType="pd" flushCache="false">
+		delete from
+		<include refid="tableName"></include>
+		where CATEGORY_ID=#{CATEGORY_ID}
+	</delete>
+
+	<!-- Batch delete buildingCategory -->
+	<delete id="deleteAllU" parameterType="String" >
+		delete from <include refid="tableName"></include>
+		where
+		CATEGORY_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		and
+		CATEGORY_ID &lt;&gt; '1'
+	</delete>
+
+	<!-- buildingCategory list (all) -->
+	<select id="listAllBuildingCategory" parameterType="pd" resultType="pd" >
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where PARENT_ID = '01'
+		<if test="keywords!= null and keywords != ''"><!-- Keyword search -->
+			and
+			(
+			CATEGORY_ORDER LIKE '%'+#{keywords}+'%'
+			or
+			CATEGORY_NAME LIKE '%'+#{keywords}+'%'
+			)
+		</if>
+		<!-- 		 <if test="CATEGORY_ID != null and CATEGORY_ID != ''">  category of retrieval
+                    and PARENT_ID = #{CATEGORY_ID}
+                </if>  -->
+
+	</select>
+
+	<!-- List buildings category for location -->
+	<select id="listAllBuildingsCategory" resultMap="buildingCategoryResultMap">
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where PARENT_ID = '01'
+
+		ORDER BY CATEGORY_ORDER
+	</select>
+
+
+
+	<!-- Get the data from the category name for excel file in building table-->
+	<select id="findByCategory_NameForExcel" parameterType="string" resultType="string" >
+		select CATEGORY_ID
+		from
+		<include refid="tableName"></include>
+		where
+		CATEGORY_NAME = #{CATEGORY_NAME}
+		and
+		PARENT_ID = '01'
+	</select>
+
+
+
+	<!-- ANAGRACE TECH(青苔) -->
+</mapper>

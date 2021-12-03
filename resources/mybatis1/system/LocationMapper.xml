@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="LocationMapper">
+
+	<resultMap type="Location" id="locationAndHeadmanResultMap">
+		<id column="LOCATION_ID" property="LOCATION_ID"/>
+		<result column="LOCATION_NAME" property="LOCATION_NAME"/>
+		<result column="ROOM_NAME" property="ROOM_NAME"/>
+		<result column="NOTE" property="NOTE"/>
+		<result column="LOCATION_NO" property="LOCATION_NO"/>
+		<result column="LAST_LOCATION_NAME" property="LAST_LOCATION_NAME"/>
+		<result column="CREATED_TIME" property="CREATED_TIME"/>
+		<result column="EDITED_TIME" property="EDITED_TIME"/>
+		<result column="LOCATION_ORDER" property="LOCATION_ORDER"/>
+		<result column="HEADMAN_NO" property="HEADMAN_NO"/>
+		<association property="building" column="BUILDING_ID" javaType="Building">
+			<id column="BUILDING_ID" property="BUILDING_ID"/>
+			<result column="BUILDING_NAME" property="BUILDING_NAME"/>
+		</association>
+		<association property="category" column="CATEGORY_ID" javaType="Category">
+			<id column="CATEGORY_ID" property="CATEGORY_ID"/>
+			<result column="CATEGORY_NAME" property="CATEGORY_NAME"/>
+		</association>
+	</resultMap>
+	<resultMap type="Location" id="locationResultMap">
+		<id column="LOCATION_ID" property="LOCATION_ID"/>
+		<result column="LOCATION_NAME" property="LOCATION_NAME"/>
+		<result column="ROOM_NAME" property="ROOM_NAME"/>
+		<result column="NOTE" property="NOTE"/>
+		<result column="LOCATION_NO" property="LOCATION_NO"/>
+		<result column="LAST_LOCATION_NAME" property="LAST_LOCATION_NAME"/>
+		<result column="CREATED_TIME" property="CREATED_TIME"/>
+		<result column="EDITED_TIME" property="EDITED_TIME"/>
+		<result column="HEADMAN_NO" property="HEADMAN_NO"/>
+		<result column="BUILDING_ID" property="BUILDING_ID"/>
+		<result column="BUILDING_NAME" property="BUILDING_NAME"/>
+		<result column="CATEGORY_ID" property="CATEGORY_ID"/>
+		<result column="CATEGORY_NAME" property="CATEGORY_NAME"/>
+		<result column="LOCATION_ORDER" property="LOCATION_ORDER"/>
+	</resultMap>
+
+	<!--表名 -->
+	<sql id="tableName">
+		SYS_location
+	</sql>
+
+
+	<sql id="buildingTableName">
+		SYS_building
+	</sql>
+	<sql id="categoryTableName">
+		SYS_category
+	</sql>
+
+	<!-- 字段 -->
+	<sql id="Field">
+				LOCATION_ID,
+				LOCATION_NAME,
+				ROOM_NAME,
+				NOTE,
+				LOCATION_NO,
+				LAST_LOCATION_NAME,
+				CREATED_TIME,
+				EDITED_TIME,
+				HEADMAN_NO,
+				LOCATION_ORDER,
+				BUILDING_ID,
+				CATEGORY_ID
+	</sql>
+
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+				#{LOCATION_ID},
+				#{LOCATION_NAME},
+				#{ROOM_NAME},
+				#{NOTE},
+				#{LOCATION_NO},
+				#{LAST_LOCATION_NAME},
+				#{CREATED_TIME},
+				#{EDITED_TIME},
+				#{HEADMAN_NO},
+				#{LOCATION_ORDER},
+				#{BUILDING_ID},
+				#{CATEGORY_ID}
+	</sql>
+
+	<!-- Get the data from the location name -->
+	<select id="findByLocation_Name" parameterType="pd" resultType="pd" >
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where
+		LOCATION_NAME = #{LOCATION_NAME}
+	</select>
+
+
+	<!-- Get the data from the building number -->
+	<select id="findByLocationNo" parameterType="pd" resultType="pd" >
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where
+		LOCATION_NO = #{LOCATION_NO}
+	</select>
+
+
+
+
+	<!--List all location under a building -->
+	<select id="listAllLocationByBuildingId"  parameterType="pd" resultType="pd" >
+		select LOCATION_ID
+		from
+		<include refid="tableName"></include>
+		where
+		BUILDING_ID = #{BUILDING_ID}
+	</select>
+
+	<!--List all locations under a room -->
+	<select id="listAllLocationByCategoryId"  parameterType="pd" resultType="pd" >
+		select LOCATION_ID
+		from
+		<include refid="tableName"></include>
+		where
+		CATEGORY_ID = #{CATEGORY_ID}
+	</select>
+
+	<!--List of locations-->
+	<select id="locationlistPage" parameterType="page" resultType="pd" >
+		select  l.LOCATION_ID,
+		l.LOCATION_NAME,
+		l.ROOM_NAME,
+		l.NOTE,
+		l.LOCATION_NO,
+		l.LAST_LOCATION_NAME,
+		l.CREATED_TIME,
+		l.EDITED_TIME,
+		l.HEADMAN_NO,
+		l.LOCATION_ORDER,
+		l.BUILDING_ID,
+		b.BUILDING_NAME,
+		l.CATEGORY_ID,
+		c.CATEGORY_NAME
+
+		from <include refid="tableName"></include> l
+		left join <include refid="buildingTableName"></include> b on l.BUILDING_ID = b.BUILDING_ID
+		left join <include refid="categoryTableName"></include> c on l.CATEGORY_ID = c.CATEGORY_ID
+
+		where l.BUILDING_ID = b.BUILDING_ID
+
+		<if test="pd.keywords!= null and pd.keywords != ''">      <!-- Keyword search -->
+			and
+			(
+			b.BUILDING_NAME LIKE '%'+#{pd.keywords}+'%'
+			or
+			c.CATEGORY_NAME LIKE '%'+#{pd.keywords}+'%'
+			or
+			l.LOCATION_NAME LIKE '%'+#{pd.keywords}+'%'
+			or
+			l.LOCATION_NO LIKE '%'+#{pd.keywords}+'%'
+			or
+			l.ROOM_NAME LIKE '%'+#{pd.keywords}+'%'
+			or
+			l.LOCATION_ORDER LIKE '%'+#{pd.keywords}+'%'
+			or
+			l.HEADMAN_NO LIKE '%'+#{pd.keywords}+'%'
+			)
+		</if>
+
+		<if test="pd.BUILDING_ID != null and pd.BUILDING_ID != ''">   <!--category of retrieval-->
+			and l.BUILDING_ID=#{pd.BUILDING_ID}
+		</if>
+		[fhstart]order by l.LOCATION_ORDER desc[fhend]
+	</select>
+
+	<!-- building list (popover selection) -->
+	<!--<select id="buildingBystafflistPage" parameterType="page" resultType="pd" >
+		select  u.USER_ID,
+				u.USERNAME,
+				u.PASSWORD,
+				u.LAST_LOGIN,
+				u.NAME,
+				u.IP,
+				u.EMAIL,
+				u.NUMBER,
+				u.PHONE,
+				r.ROLE_ID,
+				r.ROLE_NAME
+		from <include refid="tableName"></include> u, <include refid="roleTableName"></include> r
+		where u.ROLE_ID = r.ROLE_ID
+		and u.USERNAME != 'admin'
+		and r.PARENT_ID = '1'
+		<if test="pd.keywords!= null and pd.keywords != ''">关键词检索
+			and
+				(
+					 u.USERNAME LIKE '%'+#{pd.keywords}+'%'
+					 or
+					 u.EMAIL LIKE '%'+#{pd.keywords}+'%'
+					 or
+					 u.NUMBER LIKE '%'+#{pd.keywords}+'%'
+					 or
+					 u.NAME LIKE '%'+#{pd.keywords}+'%'
+					 or
+					 u.PHONE LIKE '%'+#{pd.keywords}+'%'
+				)
+		</if>
+		<if test="pd.ROLE_ID != null and pd.ROLE_ID != ''">角色检索
+			and u.ROLE_ID=#{pd.ROLE_ID}
+		</if>
+		<if test="pd.lastLoginStart!=null and pd.lastLoginStart!=''">登录时间检索
+			and u.LAST_LOGIN &gt;= #{pd.lastLoginStart}
+		</if>
+		<if test="pd.lastLoginEnd!=null and pd.lastLoginEnd!=''">登录时间检索
+			and u.LAST_LOGIN &lt;= #{pd.lastLoginEnd}
+		</if>
+		<if test="pd.STAFF_ID != null and pd.STAFF_ID != ''">条件满足时是从员工绑定登录用户处调用
+			and u.USERNAME not in (select s.USER_ID from <include refid="staffTableName"></include> s where s.USER_ID !='')
+		</if>
+		[fhstart]order by u.LAST_LOGIN desc[fhend]
+	</select> -->
+
+	<!-- Get the data from the building no -->
+	<select id="findByLocationName" parameterType="pd" resultType="pd" >
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where
+		LOCATION_NAME = #{LOCATION_NAME}
+		<if test="LOCATION_NO != null and LOCATION_NO != ''">
+			and LOCATION_NO != #{LOCATION_NO}
+		</if>
+	</select>
+
+	<!-- 通过编号获取数据 -->
+	<!-- <select id="findByUN" parameterType="pd" resultType="pd" >
+       select
+           <include refid="Field"></include>
+       from
+           <include refid="tableName"></include>
+       where
+           NUMBER = #{NUMBER}
+       <if test="USERNAME != null and USERNAME != ''">
+           and USERNAME != #{USERNAME}
+       </if>
+   </select>  -->
+
+	<!-- Get the data by location_id -->
+	<select id="findById" parameterType="pd" resultType="pd" >
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where
+		LOCATION_ID = #{LOCATION_ID}
+	</select>
+
+	<!-- New location -->
+	<insert id="saveU" parameterType="pd" >
+		insert into <include refid="tableName"></include> (
+		<include refid="Field"></include>
+		) values (
+		<include refid="FieldValue"></include>
+		)
+	</insert>
+
+	<!-- Modify  -->
+	<update id="editU" parameterType="pd" >
+		update  <include refid="tableName"></include>
+		set	LOCATION_NAME 			= #{LOCATION_NAME},
+		ROOM_NAME 				= #{ROOM_NAME},
+		HEADMAN_NO 			= #{HEADMAN_NO},
+		BUILDING_ID 			= #{BUILDING_ID},
+		CATEGORY_ID 			= #{CATEGORY_ID},
+		NOTE					= #{NOTE},
+		LAST_LOCATION_NAME		= #{LAST_LOCATION_NAME},
+		EDITED_TIME			    = #{EDITED_TIME}
+
+		where
+		LOCATION_ID = #{LOCATION_ID}
+	</update>
+
+
+	<!-- Delete location -->
+	<delete id="deleteU" parameterType="pd" flushCache="false">
+		delete from
+		<include refid="tableName"></include>
+		where LOCATION_ID = #{LOCATION_ID}
+	</delete>
+
+	<!-- Batch delete location -->
+	<delete id="deleteAllU" parameterType="String" >
+		delete from <include refid="tableName"></include>
+		where
+		LOCATION_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		and
+		LOCATION_ID &lt;&gt; '1'
+	</delete>
+
+	<!-- location list (all) -->
+	<select id="listAllLocation" parameterType="pd" resultType="pd" >
+		select  l.LOCATION_ID,
+		l.LOCATION_NAME,
+		l.ROOM_NAME,
+		l.NOTE,
+		l.LOCATION_NO,
+		l.LAST_LOCATION_NAME,
+		l.CREATED_TIME,
+		l.EDITED_TIME,
+		l.HEADMAN_NO,
+		l.LOCATION_ORDER,
+		b.BUILDING_ID,
+		b.BUILDING_NAME,
+		c.CATEGORY_ID,
+		c.CATEGORY_NAME
+
+		from <include refid="tableName"></include> l
+		left join <include refid="buildingTableName"></include> b on l.BUILDING_ID = b.BUILDING_ID
+		left join <include refid="categoryTableName"></include> c on l.CATEGORY_ID = c.CATEGORY_ID
+
+		where l.BUILDING_ID = b.BUILDING_ID
+		<if test="keywords!= null and keywords != ''"><!-- Keyword search -->
+			and
+			(
+			b.BUILDING_NAME LIKE '%'+#{keywords}+'%'
+			or
+			c.CATEGORY_NAME LIKE '%'+#{keywords}+'%'
+			or
+			l.LOCATION_NAME LIKE '%'+#{keywords}+'%'
+			or
+			l.LOCATION_NO LIKE '%'+#{keywords}+'%'
+			or
+			l.ROOM_NAME LIKE '%'+#{keywords}+'%'
+			or
+			l.LOCATION_ORDER LIKE '%'+#{keywords}+'%'
+			or
+			l.HEADMAN_NO LIKE '%'+#{keywords}+'%'
+			)
+		</if>
+
+
+	</select>
+
+
+	<!-- Get the data by location_id -->
+	<select id="findLocation_NameById" parameterType="pd" resultType="pd" >
+		select
+		LOCATION_NAME
+		from
+		<include refid="tableName"></include>
+		where
+		LOCATION_ID = #{LOCATION_ID}
+	</select>
+
+
+	<!-- List locations -->
+	<select id="listAllLocations" resultMap="locationResultMap">
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+
+		ORDER BY LOCATION_ORDER
+	</select>
+
+	<!-- ANAGRACE TECH(青苔) -->
+</mapper>

@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="RoomMapper">
+
+	<resultMap type="Room" id="roomAndCategoryResultMap">
+		<id column="ROOM_ID" property="ROOM_ID"/>
+		<result column="ROOM_NAME" property="ROOM_NAME"/>
+		<result column="NOTE" property="NOTE"/>
+		<result column="ROOM_NO" property="ROOM_NO"/>
+		<result column="LAST_ROOM_NAME" property="LAST_ROOM_NAME"/>
+		<result column="CREATED_TIME" property="CREATED_TIME"/>
+		<result column="EDITED_TIME" property="EDITED_TIME"/>
+		<association property="category" column="CATEGORY_ID" javaType="Category">
+			<id column="CATEGORY_ID" property="CATEGORY_ID"/>
+			<result column="CATEGORY_NAME" property="CATEGORY_NAME"/>
+			<result column="CATEGORY_ORDER" property="CATEGORY_ORDER"/>
+		</association>
+	</resultMap>
+	<resultMap type="Room" id="roomResultMap">
+		<id column="ROOM_ID" property="ROOM_ID"/>
+		<result column="ROOM_NAME" property="ROOM_NAME"/>
+		<result column="NOTE" property="NOTE"/>
+		<result column="ROOM_NO" property="ROOM_NO"/>
+		<result column="LAST_ROOM_NAME" property="LAST_ROOM_NAME"/>
+		<result column="CATEGORY_ID" property="CATEGORY_ID"/>
+		<result column="CREATED_TIME" property="CREATED_TIME"/>
+		<result column="EDITED_TIME" property="EDITED_TIME"/>
+	</resultMap>
+	
+	<!--表名 -->
+	<sql id="tableName">
+		SYS_room
+	</sql>
+	<sql id="categoryTableName">
+		SYS_category
+	</sql>
+	
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		ROOM_ID,
+		ROOM_NAME,
+		NOTE,
+		ROOM_NO,
+		LAST_ROOM_NAME,
+		CATEGORY_ID,
+		CREATED_TIME,
+		EDITED_TIME
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{ROOM_ID},
+		#{ROOM_NAME},
+		#{NOTE},
+		#{ROOM_NO},
+		#{LAST_ROOM_NAME},
+		#{CATEGORY_ID},
+		#{CREATED_TIME},
+		#{EDITED_TIME}
+	</sql>
+	
+	<!-- Get the data from the room name -->
+	<select id="findByRoom_Name" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			ROOM_NAME = #{ROOM_NAME}
+	</select>
+	
+	
+	<!-- Get the data from the room number -->
+	<select id="findByRoomNumber" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			ROOM_NO = #{ROOM_NO}
+	</select>
+	
+	
+	<!--List all rooms under a category -->
+	<select id="listAllRoomByCategoryId"  parameterType="pd" resultType="pd" >
+		select ROOM_ID
+		from 
+		<include refid="tableName"></include>
+		where 
+		CATEGORY_ID = #{CATEGORY_ID}
+	</select>
+	
+	<!--List of rooms-->
+	<select id="roomlistPage" parameterType="page" resultType="pd" >
+		select  r.ROOM_ID,
+				r.ROOM_NAME,
+				r.NOTE,
+				r.ROOM_NO,
+				r.LAST_ROOM_NAME,
+				r.CREATED_TIME,
+				r.EDITED_TIME,
+				c.CATEGORY_ID,
+				c.CATEGORY_NAME,
+				c.CATEGORY_ORDER
+		from <include refid="tableName"></include> r, <include refid="categoryTableName"></include> c 
+		where r.CATEGORY_ID = c.CATEGORY_ID 
+		and c.PARENT_ID = '02'
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- Keyword search -->
+			and
+				(
+					 r.ROOM_NAME LIKE '%'+#{pd.keywords}+'%'
+					 or 
+					 r.ROOM_NO LIKE '%'+#{pd.keywords}+'%'
+					 or
+					 c.CATEGORY_NAME LIKE '%'+#{pd.keywords}+'%'
+				)
+		</if>
+		 <if test="pd.CATEGORY_ID != null and pd.CATEGORY_ID != ''">  <!-- category of retrieval -->
+			and r.CATEGORY_ID=#{pd.CATEGORY_ID} 
+		</if>
+		[fhstart]order by r.ROOM_NO desc[fhend]
+	</select>
+	
+	 <!-- building list (popover selection) -->
+	<!--<select id="buildingBystafflistPage" parameterType="page" resultType="pd" >
+		select  u.USER_ID,
+				u.USERNAME,
+				u.PASSWORD,
+				u.LAST_LOGIN,
+				u.NAME,
+				u.IP,
+				u.EMAIL,
+				u.NUMBER,
+				u.PHONE,
+				r.ROLE_ID,
+				r.ROLE_NAME
+		from <include refid="tableName"></include> u, <include refid="roleTableName"></include> r 
+		where u.ROLE_ID = r.ROLE_ID 
+		and u.USERNAME != 'admin'
+		and r.PARENT_ID = '1'
+		<if test="pd.keywords!= null and pd.keywords != ''">关键词检索
+			and
+				(
+					 u.USERNAME LIKE '%'+#{pd.keywords}+'%'
+					 or 
+					 u.EMAIL LIKE '%'+#{pd.keywords}+'%'
+					 or
+					 u.NUMBER LIKE '%'+#{pd.keywords}+'%'
+					 or
+					 u.NAME LIKE '%'+#{pd.keywords}+'%'
+					 or
+					 u.PHONE LIKE '%'+#{pd.keywords}+'%'
+				)
+		</if>
+		<if test="pd.ROLE_ID != null and pd.ROLE_ID != ''">角色检索
+			and u.ROLE_ID=#{pd.ROLE_ID} 
+		</if>
+		<if test="pd.lastLoginStart!=null and pd.lastLoginStart!=''">登录时间检索
+			and u.LAST_LOGIN &gt;= #{pd.lastLoginStart} 
+		</if>
+		<if test="pd.lastLoginEnd!=null and pd.lastLoginEnd!=''">登录时间检索
+			and u.LAST_LOGIN &lt;= #{pd.lastLoginEnd} 
+		</if>
+		<if test="pd.STAFF_ID != null and pd.STAFF_ID != ''">条件满足时是从员工绑定登录用户处调用
+			and u.USERNAME not in (select s.USER_ID from <include refid="staffTableName"></include> s where s.USER_ID !='')
+		</if>
+		[fhstart]order by u.LAST_LOGIN desc[fhend]
+	</select> -->
+	
+	<!-- Get the data from the room no -->
+	<select id="findByRoomNo" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			ROOM_NO = #{ROOM_NO}
+		<if test="ROOM_NAME != null and ROOM_NAME != ''">
+			and ROOM_NAME != #{ROOM_NAME} 
+		</if>
+	</select>
+	
+	<!-- 通过编号获取数据 -->
+	<!-- <select id="findByUN" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			NUMBER = #{NUMBER}
+		<if test="USERNAME != null and USERNAME != ''">
+			and USERNAME != #{USERNAME} 
+		</if>
+	</select> -->
+	
+	<!-- Get the data by room_id -->
+	<select id="findById" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			ROOM_ID = #{ROOM_ID}
+	</select>
+	
+	<!-- New room -->
+	<insert id="saveU" parameterType="pd" >
+		insert into <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) values (
+			<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<!-- Modify  -->
+	<update id="editU" parameterType="pd" >
+		update  <include refid="tableName"></include>
+			set	ROOM_NAME 					= #{ROOM_NAME},
+				CATEGORY_ID 				= #{CATEGORY_ID},
+				NOTE						= #{NOTE},
+				LAST_ROOM_NAME			= #{LAST_ROOM_NAME},
+				EDITED_TIME			= #{EDITED_TIME}
+			where 
+				ROOM_ID = #{ROOM_ID}
+	</update>
+	
+
+	<!-- Delete room -->
+	<delete id="deleteU" parameterType="pd" flushCache="false">
+		delete from 
+		<include refid="tableName"></include>
+		where ROOM_ID = #{ROOM_ID}
+	</delete>
+	
+	<!-- Batch delete room -->
+	<delete id="deleteAllU" parameterType="String" >
+		delete from <include refid="tableName"></include>
+		where 
+			ROOM_ID in
+  			 <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                  #{item}
+             </foreach>
+        and
+			ROOM_ID &lt;&gt; '1'
+	</delete>
+	
+	<!-- room list (all) -->
+	<select id="listAllRoom" parameterType="pd" resultType="pd" >
+		select  r.ROOM_ID,
+				r.ROOM_NAME,
+				r.NOTE,
+				r.ROOM_NO,
+				r.LAST_ROOM_NAME,
+				r.CREATED_TIME,
+				r.EDITED_TIME,
+				c.CATEGORY_ID,
+				c.CATEGORY_NAME,
+				c.CATEGORY_ORDER
+		from <include refid="tableName"></include> r, <include refid="categoryTableName"></include> c 
+		where r.CATEGORY_ID = c.CATEGORY_ID 
+		and c.PARENT_ID = '02'
+		<if test="keywords!= null and keywords != ''"><!-- Keyword search -->
+			and
+				(
+					 r.ROOM_NAME LIKE '%'+#{keywords}+'%'
+					 or 
+					 r.ROOM_NO LIKE '%'+#{keywords}+'%'
+					 or
+					 c.CATEGORY_NAME LIKE '%'+#{keywords}+'%'
+				)
+		</if>
+		 <if test="CATEGORY_ID != null and CATEGORY_ID != ''">  <!--category of retrieval-->
+			and r.CATEGORY_ID=#{CATEGORY_ID} 
+		</if> 
+		
+	</select>
+	
+	
+	<!-- List rooms for location -->
+	<select id="listAllRooms" resultMap="roomResultMap">
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		
+		ORDER BY ROOM_NO
+	</select>
+	
+	
+	<!-- Get the data by room_id -->
+	<select id="findByIdForLocation" parameterType="pd" resultType="pd" >
+		select 
+			ROOM_NO,CATEGORY_ORDER,PARENT_ID,ROOM_NAME
+		from 
+			<include refid="tableName"></include> r 
+		 join 
+		<include refid="categoryTableName"></include> c 
+		on r.CATEGORY_ID=c.CATEGORY_ID
+		where 
+			ROOM_ID = #{ROOM_ID}
+	</select>
+	
+	
+	<!-- List Rooms under this group -->
+	<select id="listRoomsByCId" resultMap="roomResultMap">
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where 
+		CATEGORY_ID = #{CATEGORY_ID}
+	</select>
+	
+	<!-- fh313596790qq(青苔) -->
+</mapper>
